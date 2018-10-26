@@ -11,8 +11,8 @@ This module provides Basic and Digest HTTP authentication for Flask routes.
 from functools import wraps
 from hashlib import md5
 from random import Random, SystemRandom
-from bottle import request#, make_response, session
-#from werkzeug.datastructures import Authorization
+from bottle import request, response, abort
+import pdb
 
 __version__ = '3.2.4'
 
@@ -38,15 +38,18 @@ class HTTPAuth(object):
         return f
 
     def error_handler(self, f):
+        #pdb.set_trace()
         @wraps(f)
         def decorated(*args, **kwargs):
             res = f(*args, **kwargs)
-            res = make_response(res)
-            if res.status_code == 200:
+            if response.status_code == 200:
                 # if user didn't set status code, use 401
-                res.status_code = 401
-            if 'WWW-Authenticate' not in res.headers.keys():
-                res.headers['WWW-Authenticate'] = self.authenticate_header()
+                #response.status_code = 401
+                #pdb.set_trace()
+                if not response.headers.get('WWW-Authenticate'):
+                    response.set_header('WWW-Authenticate',self.authenticate_header())
+                response.status = 401
+            
             return res
         self.auth_error_callback = decorated
         return decorated
@@ -55,50 +58,52 @@ class HTTPAuth(object):
         return '{0} realm="{1}"'.format(self.scheme, self.realm)
 
     def get_auth(self):
-        auth = request.authorization
+        #pdb.set_trace()
+        auth = request.auth
         if auth is None and 'Authorization' in request.headers:
-            # Flask/Werkzeug do not recognize any authentication types
-            # other than Basic or Digest, so here we parse the header by
-            # hand
             try:
                 auth_type, token = request.headers['Authorization'].split(
                     None, 1)
-                auth = Authorization(auth_type, {'token': token})
-            except ValueError:
+                auth = str(base64.b64decode(token),'utf-8')
+            except ValueError or Exception:
                 # The Authorization header is either empty or has no token
                 pass
 
         # if the auth type does not match, we act as if there is no auth
         # this is better than failing directly, as it allows the callback
         # to handle special cases, like supporting multiple auth types
-        if auth is not None and auth.type.lower() != self.scheme.lower():
-            auth = None
+        if auth is not None and 'Authorization' in request.headers:
+            try:
+                auth_type, token = request.headers['Authorization'].split(
+                    None, 1)
+            except ValueError:
+                # The Authorization header is either empty or has no token
+                pass
+            if auth_type.lower() != self.scheme.lower():
+                auth = None
 
         return auth
 
     def get_auth_password(self, auth):
         password = None
 
-        if auth and auth.username:
-            password = self.get_password_callback(auth.username)
+        if auth:
+            password = self.get_password_callback(auth[0])
 
         return password
 
     def login_required(self, f):
+        #pdb.set_trace()
         @wraps(f)
         def decorated(*args, **kwargs):
             auth = self.get_auth()
-
-            # Flask normally handles OPTIONS requests on its own, but in the
-            # case it is configured to forward those to the application, we
-            # need to ignore authentication headers and let the request through
-            # to avoid unwanted interactions with CORS.
             if request.method != 'OPTIONS':  # pragma: no cover
-                password = self.get_auth_password(auth)
+                #pdb.set_trace()
+                #password = self.get_auth_password(auth)
 
-                if not self.authenticate(auth, password):
+                if not self.authenticate(auth):
                     # Clear TCP receive buffer of any pending data
-                    request.data
+                    #request.data
                     return self.auth_error_callback()
 
             return f(*args, **kwargs)
@@ -125,10 +130,10 @@ class HTTPBasicAuth(HTTPAuth):
         self.verify_password_callback = f
         return f
 
-    def authenticate(self, auth, stored_password):
+    def authenticate(self, auth):
         if auth:
-            username = auth.username
-            client_password = auth.password
+            username = auth[0]
+            client_password = auth[1]
         else:
             username = ""
             client_password = ""
