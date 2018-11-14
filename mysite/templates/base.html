@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<title>{% block title %}{% endblock %} - Polls</title>
+<link rel="stylesheet" href="{% static 'auth/style.css' %}">
+<nav>
+  <h1><a href="{% url 'polls:index' %}">Polls</a></h1>
+  <ul>
+    {% if users %}
+      <li><span>{{ users.username }}</span>
+      <li><a href="{% url 'auth:logout' %}">Log Out</a>
+    {% else %}
+      <li><a href="{% url 'auth:register' %}">Register</a>
+      <li><a href="{% url 'auth:login' %}">Log In</a>
+    {% endif %}
+  </ul>
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+</section>
