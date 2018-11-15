@@ -1,19 +1,26 @@
 {% load static %}
 <!doctype html>
-<title>{% block title %}{% endblock %} - Polls</title>
-<link rel="stylesheet" href="{% static 'auth/style.css' %}">
+<title>{% block title %}{% endblock %} - Mysite</title>
+<link rel="stylesheet" href="{% static 'myauth/style.css' %}">
 <nav>
-  <h1><a href="{% url 'polls:index' %}">Polls</a></h1>
+  <h1><a href="{% url 'home' %}">Mysite</a></h1>
   <ul>
     {% if users %}
       <li><span>{{ users.username }}</span>
-      <li><a href="{% url 'auth:logout' %}">Log Out</a>
+      <li><a href="{% url 'myauth:logout' %}">Log Out</a>
     {% else %}
-      <li><a href="{% url 'auth:register' %}">Register</a>
-      <li><a href="{% url 'auth:login' %}">Log In</a>
+      <li><a href="{% url 'myauth:register' %}">Register</a>
+      <li><a href="{% url 'myauth:login' %}">Log In</a>
     {% endif %}
   </ul>
 </nav>
+<ul id="nav"> 
+  <li><a href="{% url 'blog:index' %}">Blog</a></li> 
+  <li><a href="{% url 'polls:index' %}">Polls</a></li> 
+  <li><a href="">Others</a></li> 
+  <li><a href="">Help</a></li> 
+  <li><a href="">About</a></li> 
+</ul> 
 <section class="content">
   <header>
     {% block header %}{% endblock %}

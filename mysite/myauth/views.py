@@ -10,10 +10,8 @@ from .models import User
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(request, *args, **kwargs):
-        try:
-            request.session['userid']
-        except KeyError:
-            return HttpResponseRedirect(reverse('auth:login'))
+        if 'userid' not in request.session:
+            return HttpResponseRedirect(reverse('myauth:login'))
         return view(request, *args, **kwargs)
     return wrapped_view
     
@@ -37,16 +35,12 @@ def register(request):
 
         if error is None:
             User.objects.create(username=username, password=password)
-            return HttpResponseRedirect(reverse('auth:login'))
+            return HttpResponseRedirect(reverse('myauth:login'))
 
         messages.add_message(request, messages.INFO, error)
-    try:
-        request.session['userid']
-    except KeyError:
-        pass
-    else:
-        return HttpResponseRedirect(reverse('polls:index'))
-    return render(request, 'auth/register.html', {})
+    if 'userid' in request.session:
+        return HttpResponseRedirect(reverse('home'))
+    return render(request, 'myauth/register.html', {})
 
 def login(request):
     if request.method == 'POST':
@@ -64,21 +58,19 @@ def login(request):
         
         if error is None:
             request.session['userid'] = user.id
-            return HttpResponseRedirect(reverse('polls:index'))
+            request.session.set_expiry(300)
+            return HttpResponseRedirect(reverse('home'))
 
         messages.add_message(request, messages.INFO, error)
         
-    try:
-        request.session['userid']
-    except KeyError:
-        pass
-    else:
-        return HttpResponseRedirect(reverse('polls:index'))
-    return render(request, 'auth/login.html')
+    if 'userid' in request.session:
+        return HttpResponseRedirect(reverse('home'))
+    return render(request, 'myauth/login.html')
 
 def logout(request):
     try:
         del request.session['userid']
     except KeyError:
         pass
-    return HttpResponseRedirect(reverse('polls:index'))
+    request.session.flush()
+    return HttpResponseRedirect(reverse('home'))

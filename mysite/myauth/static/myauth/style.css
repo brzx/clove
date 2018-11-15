@@ -24,3 +24,9 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .content textarea { min-height: 12em; resize: vertical; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
+
+ul#nav{ width:920px; height:60px; background:lightgray;margin:0 auto} 
+ul#nav li{display:inline; height:60px} 
+ul#nav li a{display:inline-block; padding:0 20px; height:60px; line-height:60px;
+color:black; font-family:"\5FAE\8F6F\96C5\9ED1"; font-size:16px} 
+ul#nav li a:hover{background:#0095BB}/*设置鼠标滑过或悬停时变化的背景颜色*/ 
