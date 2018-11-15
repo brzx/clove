@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit "{{ post.title }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <label for="title">Title</label>
+    <input name="title" id="title"
+      value="{% if request.POST.title %}{{ request.POST.title }}{% else %}{{ post.title }}{% endif %}" required>
+    <label for="body">Body</label>
+    <textarea name="body" id="body">{% if request.POST.body %}{{ request.POST.body }}{% else %}{{ post.body }}{% endif %}</textarea>
+    <input type="submit" value="Save">
+  </form>
+  <hr>
+  <form action="{% url 'blog:delete' post.id %}" method="post">
+    {% csrf_token %}
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+  </form>
+{% endblock %}

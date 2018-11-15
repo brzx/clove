@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from myauth import models as authmodel
 
@@ -10,3 +11,7 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.created = datetime.datetime.now()
+        super().save(*args, **kwargs)
