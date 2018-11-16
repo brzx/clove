@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Posts{% endblock %}</h1>
+  <h3>{% block title %}Posts{% endblock %}</h3>
   {% if users %}
     <a class="action" href="{% url 'blog:create' %}">New</a>
   {% endif %}
@@ -22,7 +22,7 @@
       <p class="body">{{ post.body }}</p>
     </article>
     {% if not loop.last %}
-      <hr>
+      <br>
     {% endif %}
   {% endfor %}
 {% endblock %}

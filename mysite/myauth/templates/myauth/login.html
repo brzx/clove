@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Log In{% endblock %}</h1>
+  <h3>{% block title %}Log In{% endblock %}</h3>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
+  <form class="form-inline" method="post">
     {% csrf_token %}
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
+    <div class="form-group" id="jz">
+      <label for="username">Username</label>
+      <input name="username" type="text" class="form-control" id="username" placeholder="Please input username" required>
+    </div>
+    <div class="form-group" id="jz">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" name="password" id="password" placeholder="Please input password" required>
+    </div>
+    <div class="form-group" id="jz">
+      <button type="submit" class="btn btn-default">Log In</button>
+    </div>
   </form>
 {% endblock %}

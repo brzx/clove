@@ -1,9 +1,15 @@
 {% load static %}
 <!doctype html>
-<title>{% block title %}{% endblock %} - Mysite</title>
-<link rel="stylesheet" href="{% static 'myauth/style.css' %}">
+<html>
+  <head>
+    <title>{% block title %}{% endblock %} - Clove</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    <link href="http://lib.sinaapp.com/js/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'myauth/style.css' %}">
+  </head>
 <nav>
-  <h1><a href="{% url 'home' %}">Mysite</a></h1>
+  <h1><a href="{% url 'home' %}"><img id="logo" src="{% static 'myauth/img/clove_50px_meitu.jpg' %}" class="img-circle">Clove</a></h1>
   <ul>
     {% if users %}
       <li><span>{{ users.username }}</span>
@@ -14,13 +20,15 @@
     {% endif %}
   </ul>
 </nav>
+<hr>
 <ul id="nav"> 
   <li><a href="{% url 'blog:index' %}">Blog</a></li> 
   <li><a href="{% url 'polls:index' %}">Polls</a></li> 
   <li><a href="">Others</a></li> 
   <li><a href="">Help</a></li> 
   <li><a href="">About</a></li> 
-</ul> 
+</ul>
+<hr>
 <section class="content">
   <header>
     {% block header %}{% endblock %}
@@ -32,3 +40,8 @@
   {% endif %}
   {% block content %}{% endblock %}
 </section>
+  <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
+  <script src="http://lib.sinaapp.com/js/jquery/3.1.0/jquery-3.1.0.min.js"></script>
+  <!-- 包括所有已编译的插件 -->
+  <script src="http://lib.sinaapp.com/js/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</html>
